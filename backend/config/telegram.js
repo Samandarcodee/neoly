@@ -18,11 +18,11 @@ export function initTelegramBot() {
     const chatId = msg.chat.id;
     // Simple heartbeat reply to confirm bot is running
     if (msg.text && /^\/start/i.test(msg.text)) {
-      bot.sendMessage(chatId, 'HabitFlow bot is up. Send /help for commands.');
+      bot.sendMessage(chatId, 'HabitFlow boti ishga tushdi. Buyruqlar uchun /help yuboring.');
       return;
     }
     if (msg.text && /^\/help/i.test(msg.text)) {
-      bot.sendMessage(chatId, 'Available commands:\n/start - check bot status');
+      bot.sendMessage(chatId, 'Mavjud buyruqlar:\n/start - bot holatini tekshirish');
       return;
     }
   });
