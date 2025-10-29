@@ -12,7 +12,13 @@ export function initTelegramBot() {
   // Reuse existing instance when hot-reloaded in dev
   if (botInstance) return botInstance;
 
-  const bot = new TelegramBot(token, { polling: true });
+  const bot = new TelegramBot(token, {
+    polling: {
+      interval: 300,
+      autoStart: true,
+      params: { timeout: 60 }
+    }
+  });
 
   bot.on('message', (msg) => {
     const chatId = msg.chat.id;
