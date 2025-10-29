@@ -1,19 +1,21 @@
 FROM node:20-alpine
 
+# App root
 WORKDIR /app
 
-# Copy package files
-COPY package.json package-lock.json* ./
+# Copy backend package files and install only backend deps
+COPY backend/package*.json ./backend/
+WORKDIR /app/backend
+RUN npm ci --omit=dev || npm install --omit=dev
 
-# Install dependencies
-RUN npm install
+# Copy backend source only
+COPY backend/. /app/backend
 
-# Copy application code
-COPY . .
-
-# Expose port
+# Runtime env
+ENV NODE_ENV=production
+ENV PORT=3000
 EXPOSE 3000
 
-# Start application
+# Start backend
 CMD ["npm", "start"]
 

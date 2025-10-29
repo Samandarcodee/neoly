@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import habitRoutes from './routes/habits.js';
+import { initTelegramBot } from './config/telegram.js';
 
 dotenv.config();
 
@@ -29,6 +30,8 @@ mongoose.connect(MONGODB_URI)
     console.log('✅ Connected to MongoDB');
     // Import cron after DB connection
     import('./config/cron.js');
+    // Start Telegram bot if token is provided
+    initTelegramBot();
   })
   .catch((err) => console.error('❌ MongoDB connection error:', err));
 
