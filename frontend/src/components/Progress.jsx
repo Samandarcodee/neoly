@@ -48,11 +48,11 @@ const Progress = ({ habit, onBack, onCheckIn, hapticFeedback, showAlert }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
+    <div className="min-h-screen bg-black text-white p-6">
       <div className="max-w-md mx-auto">
         <button
           onClick={onBack}
-          className="text-gray-600 hover:text-gray-900 mb-6"
+          className="text-gray-300 hover:text-white mb-6"
         >
           ← Orqaga
         </button>
@@ -61,12 +61,12 @@ const Progress = ({ habit, onBack, onCheckIn, hapticFeedback, showAlert }) => {
           <div className="text-6xl mb-4">
             {habit.completed ? '🎉' : '📊'}
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold mb-2">
             {habit.title}
           </h1>
         </div>
 
-        <div className="bg-white rounded-3xl p-8 mb-6 shadow-xl border border-gray-100">
+        <div className="bg-zinc-900 rounded-3xl p-8 mb-6 shadow-xl border border-zinc-800">
           {/* Circular Progress */}
           <div className="relative w-48 h-48 mx-auto mb-6">
             <svg className="transform -rotate-90" width="100%" height="100%">
@@ -109,21 +109,21 @@ const Progress = ({ habit, onBack, onCheckIn, hapticFeedback, showAlert }) => {
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <div className="text-5xl font-black text-gray-900">
+                <div className="text-5xl font-black">
                   {habit.currentDay}
                 </div>
-                <div className="text-sm text-gray-500">/ {habit.duration} kun</div>
+                <div className="text-sm text-gray-400">/ {habit.duration} kun</div>
               </div>
             </div>
           </div>
 
           {/* Linear Progress */}
           <div className="mb-4">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
+            <div className="flex justify-between text-sm text-gray-400 mb-2">
               <span className="font-semibold">Progress</span>
-              <span className="font-bold text-primary">{Math.round(progress)}%</span>
+              <span className="font-bold text-rose-400">{Math.round(progress)}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden shadow-inner">
+            <div className="w-full bg-zinc-800 rounded-full h-4 overflow-hidden shadow-inner">
               <div
                 className={`h-4 rounded-full transition-all duration-1000 ${
                   progress >= 80 ? 'bg-gradient-to-r from-green-500 to-emerald-600' :
@@ -132,26 +132,26 @@ const Progress = ({ habit, onBack, onCheckIn, hapticFeedback, showAlert }) => {
                 }`}
                 style={{ width: `${Math.min(progress, 100)}%` }}
               >
-                <div className="h-full w-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse-slow"></div>
+                <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse-slow"></div>
               </div>
             </div>
           </div>
 
           {habit.completed ? (
-            <div className="text-center py-4 bg-green-50 rounded-xl">
-              <p className="text-green-800 font-bold text-lg">
+            <div className="text-center py-4 bg-emerald-900/30 rounded-xl">
+              <p className="text-emerald-300 font-bold text-lg">
                 🎉 Maqsad Amalga Oshirildi!
               </p>
-              <p className="text-green-600 text-sm mt-1">
+              <p className="text-emerald-400 text-sm mt-1">
                 Siz {habit.duration} kunlik shaxsiy rejangizni amalga oshirdingiz!
               </p>
             </div>
           ) : (
             <div className="text-center">
-              <p className="text-gray-700 font-semibold mb-2">
+              <p className="text-gray-300 font-semibold mb-2">
                 {remainingDays} kun qoldi
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-400">
                 {progress >= 80
                   ? '🔥 A\'lo! Yaqinda tayyor bo\'ladi!'
                   : progress >= 50
@@ -168,7 +168,7 @@ const Progress = ({ habit, onBack, onCheckIn, hapticFeedback, showAlert }) => {
           <button
             onClick={handleCheckIn}
             disabled={isLoading || !canCheckIn}
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-5 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transform hover:scale-105"
+            className="w-full bg-emerald-600 text-white font-bold py-5 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transform hover:scale-105"
           >
             {isLoading ? (
               <>
