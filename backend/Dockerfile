@@ -3,7 +3,7 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package.json first
 COPY package.json ./
 
 # Install dependencies
@@ -12,8 +12,8 @@ RUN npm install --omit=dev
 # Copy all application files
 COPY . .
 
-# Verify package.json has start script
-RUN node -e "const pkg = require('./package.json'); if (!pkg.scripts || !pkg.scripts.start) { console.error('ERROR: start script missing'); process.exit(1); }"
+# Show package.json content for debugging
+RUN cat package.json
 
 # Set environment variables
 ENV NODE_ENV=production
@@ -22,5 +22,5 @@ ENV PORT=3000
 # Expose port
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "start"]
+# Start the application directly (more reliable than npm start)
+CMD ["node", "server.js"]
