@@ -79,6 +79,9 @@ const HabitList = ({ habits, onHabitClick, onCreateNew }) => {
           const progress = (habit.currentDay / habit.duration) * 100;
           const remainingDays = habit.duration - habit.currentDay;
           const motivation = getMotivationalText(habit);
+          const last = habit.lastCheckIn ? new Date(habit.lastCheckIn) : null;
+          const today = new Date();
+          const isToday = last && today.getDate() === last.getDate() && today.getMonth() === last.getMonth() && today.getFullYear() === last.getFullYear();
 
           return (
             <div
@@ -92,9 +95,9 @@ const HabitList = ({ habits, onHabitClick, onCreateNew }) => {
                   <div className="text-white font-semibold text-lg">{habit.title}</div>
                   <div className="inline-flex mt-1 items-center px-2 py-0.5 text-xs rounded-lg bg-fuchsia-700/40 text-fuchsia-200">Habit</div>
                 </div>
-                {habit.completed ? (
+                {isToday && (
                   <div className="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center">✓</div>
-                ) : null}
+                )}
               </div>
             </div>
           );

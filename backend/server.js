@@ -1,8 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
-import { initSqlite } from './config/sqlite.js';
+import { connectPostgreSQL } from './config/postgresql.js';
 import habitRoutes from './routes/habits.js';
 import { initTelegramBot } from './config/telegram.js';
 
@@ -25,29 +24,23 @@ app.get('/health', (req, res) => {
 // Initialize Telegram bot early so it works even if DB is offline locally
 initTelegramBot();
 
-// DB selection
-const DB_DRIVER = (process.env.DB_DRIVER || '').toLowerCase();
-// MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/habitflow';
+// PostgreSQL Connection
 const PORT = process.env.PORT || 3000;
 
-if (DB_DRIVER === 'sqlite') {
-  initSqlite();
-  console.log('✅ Using SQLite database');
-  import('./config/cron.js');
-} else {
-  mongoose.connect(MONGODB_URI)
-    .then(() => {
-      console.log('✅ Connected to MongoDB');
-      // Import cron after DB connection
-      import('./config/cron.js');
-      // Start Telegram bot if token is provided
-      initTelegramBot();
-    })
-    .catch((err) => console.error('❌ MongoDB connection error:', err));
-}
+// Connect to PostgreSQL
+connectPostgreSQL()
+  .then(() => {
+    console.log('✅ PostgreSQL connected');
+    // Import cron after DB connection
+    import('./config/cron.js');
+    // Start Telegram bot if token is provided
+    initTelegramBot();
+  })
+  .catch((err) => {
+    console.error('❌ PostgreSQL connection error:', err);
+    process.exit(1);
+  });
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
-

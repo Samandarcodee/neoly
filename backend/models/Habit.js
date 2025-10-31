@@ -1,42 +1,50 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/postgresql.js';
 
-const habitSchema = new mongoose.Schema({
+const Habit = sequelize.define('Habit', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
   userId: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false,
     index: true
   },
   title: {
-    type: String,
-    required: true
+    type: DataTypes.STRING,
+    allowNull: false
   },
   duration: {
-    type: Number,
-    required: true
+    type: DataTypes.INTEGER,
+    allowNull: false
   },
   currentDay: {
-    type: Number,
-    default: 0
+    type: DataTypes.INTEGER,
+    defaultValue: 0
   },
   startDate: {
-    type: Date,
-    default: Date.now
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
   },
   completed: {
-    type: Boolean,
-    default: false
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   },
   lastCheckIn: {
-    type: Date,
-    default: null
+    type: DataTypes.DATE,
+    allowNull: true,
+    defaultValue: null
   },
-  checkInHistory: [{
-    date: Date,
-    timestamp: Date
-  }]
+  checkInHistory: {
+    type: DataTypes.JSONB,
+    defaultValue: []
+  }
 }, {
-  timestamps: true
+  tableName: 'habits',
+  timestamps: true,
+  underscored: false
 });
 
-export default mongoose.model('Habit', habitSchema);
-
+export default Habit;

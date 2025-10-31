@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const BOT_TOKEN = process.env.BOT_TOKEN;
+const BOT_TOKEN = process.env.BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN;
 const WEBAPP_URL = process.env.WEBAPP_URL || 'https://your-miniapp-url.com';
 
 // Run every day at 9 AM
@@ -13,7 +13,9 @@ cron.schedule('0 9 * * *', async () => {
   try {
     console.log('Running daily reminder job...');
     
-    const habits = await Habit.find({ completed: false });
+    const habits = await Habit.findAll({ 
+      where: { completed: false }
+    });
     
     for (const habit of habits) {
       const today = new Date();
@@ -33,7 +35,7 @@ cron.schedule('0 9 * * *', async () => {
         }
       }
 
-      if (needsReminder) {
+      if (needsReminder && BOT_TOKEN) {
         const message = `🗓️ HabitFlow Reminder\n\n` +
                        `📌 ${habit.title}\n` +
                        `📊 Progress: ${habit.currentDay}/${habit.duration} days\n` +
@@ -74,4 +76,3 @@ cron.schedule('0 9 * * *', async () => {
 });
 
 console.log('Cron job scheduled for daily reminders at 9 AM UTC');
-

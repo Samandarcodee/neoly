@@ -1,30 +1,25 @@
-# 🚀 Railway'ga Deploy Qilish
+# 🚀 Railway'ga PostgreSQL bilan Deploy Qilish
 
-## Step 1: MongoDB Atlas (Free Cloud)
+## Step 1: Railway'ga PostgreSQL Database Qo'shish
 
-1. **Hisob yarating:** https://www.mongodb.com/cloud/atlas/register
-2. **Database yarating:**
-   - "Build a Database" → FREE → AWS
-   - Cluster name: habitflow
-3. **User yarating:**
-   - Security → Database Access → Add New User
-   - Username: habitflow_user
-   - Password: Kuchli password
-4. **Network Access:**
-   - Network Access → Add IP Address → 0.0.0.0/0
-5. **Connection String oling:**
-   - Clusters → Connect → Connect your application
-   - Copy connection string
-   - `<password>` ni o'z password bilan almashtiring
+1. **Hisob yarating:** https://railway.app ga kiring
+2. **New Project yarating:**
+   - "Start a New Project" tugmasini bosing
+   - GitHub bilan ulaning
 
-**Connection String:**
-```
-mongodb+srv://habitflow_user:your_password@cluster0.xxxxx.mongodb.net/habitflow
-```
+3. **PostgreSQL Service qo'shing:**
+   - "New" → "Database" → "Add PostgreSQL"
+   - Railway avtomatik PostgreSQL database yaratadi
+   - Database connection string avtomatik `DATABASE_URL` environment variable sifatida qo'shiladi
+
+4. **Connection String ni oling:**
+   - PostgreSQL service ni oching
+   - "Variables" tab → `DATABASE_URL` ni ko'rasiz
+   - Yoki "Connect" tab → "Postgres Connection URL" ni ko'rasiz
 
 ---
 
-## Step 2: Telegram Bot
+## Step 2: Telegram Bot (Optional)
 
 1. **@BotFather ni oching** (Telegram'da)
 2. `/newbot` yuboring
@@ -37,39 +32,47 @@ mongodb+srv://habitflow_user:your_password@cluster0.xxxxx.mongodb.net/habitflow
 
 ---
 
-## Step 3: Railway'ga Deploy
+## Step 3: Backend'ni Railway'ga Deploy Qilish
 
-### 3.1 Hisob yarating
-- https://railway.app ga kiring
-- "Start a New Project" tugmasini bosing
-- GitHub bilan ulaning
-
-### 3.2 Backend Deploy
-1. "Deploy from GitHub repo" ni tanlang
+### 3.1 Backend Service Qo'shish
+1. Railway Dashboard'da "New" → "GitHub Repo" ni tanlang
 2. `neoly` repository ni tanlang
 3. **Service Settings:**
    - Name: habitflow-backend
-   - Root Directory: `backend`
-   - Build Command: `npm install`
-   - Start Command: `npm start`
+   - Root Directory: `backend` (agar kerak bo'lsa)
 
-### 3.3 Environment Variables
-Railway Dashboard → Variables → Add:
+### 3.2 PostgreSQL Database'ni Backend'ga Link Qilish
+1. Backend service ni oching
+2. "Variables" tab ga o'ting
+3. "Add Reference" tugmasini bosing
+4. PostgreSQL service ni tanlang
+5. `DATABASE_URL` variable ni tanlang
+6. Railway avtomatik database ni backend'ga ulaydi
+
+### 3.3 Environment Variables Qo'shish
+Backend service → Variables → Add:
 
 ```
-MONGODB_URI=mongodb+srv://habitflow_user:password@cluster0.xxxxx.mongodb.net/habitflow
 PORT=3000
+TELEGRAM_BOT_TOKEN=1234567890:ABCdefGHIjklMNOpqrsTUVwxyz
 BOT_TOKEN=1234567890:ABCdefGHIjklMNOpqrsTUVwxyz
 BOT_USERNAME=habitflow_bot
 WEBAPP_URL=https://your-frontend-url.vercel.app
 ```
 
-### 3.4 Backend Deploy!
+**Eslatma:** `DATABASE_URL` PostgreSQL service bilan avtomatik link qilingan bo'lishi kerak!
+
+### 3.4 Build va Deploy Settings
+Railway.json yoki Railway Dashboard'da:
+- **Build Command:** `npm install` (yoki Railway avtomatik aniqlaydi)
+- **Start Command:** `npm start`
+- **Dockerfile:** `backend/Dockerfile` (agar mavjud bo'lsa)
+
+### 3.5 Deploy!
 - Railway automatic build qiladi
-- Deploy tugmasini bosing
 - **Backend URL olinadi:**
   ```
-  https://habitflow-production.up.railway.app
+  https://habitflow-backend-production.up.railway.app
   ```
 
 ---
@@ -88,7 +91,7 @@ WEBAPP_URL=https://your-frontend-url.vercel.app
 
 ### 4.3 Environment Variable
 ```
-VITE_API_URL=https://habitflow-production.up.railway.app
+VITE_API_URL=https://habitflow-backend-production.up.railway.app
 ```
 
 ### 4.4 Deploy!
@@ -99,16 +102,18 @@ VITE_API_URL=https://habitflow-production.up.railway.app
 
 ---
 
-## Step 5: URL'ni Ulash
+## Step 5: URL'larni Ulash
 
 ### Railway Backend'ga Frontend URL qo'shing:
+Backend service → Variables → Add/Update:
 ```
 WEBAPP_URL=https://habitflow.vercel.app
 ```
 
-### Vercel Frontend'ga Backend URL qo'shing:
+### Vercel Frontend'ga Backend URL yangilash:
+Frontend → Settings → Environment Variables:
 ```
-VITE_API_URL=https://habitflow-production.up.railway.app
+VITE_API_URL=https://habitflow-backend-production.up.railway.app
 ```
 
 ### Redeploy qiling!
@@ -131,10 +136,16 @@ VITE_API_URL=https://habitflow-production.up.railway.app
 
 ## Step 7: Test Qilish! 🎉
 
-1. Telegram'da bot'ni oching
-2. `/start` yuboring
-3. **"Open HabitFlow"** tugmasini bosing
-4. Mini App ochiladi! 🚀
+1. Railway'da backend logs ni tekshiring - PostgreSQL ulanayotganini ko'rasiz:
+   ```
+   ✅ PostgreSQL connection established successfully
+   ✅ PostgreSQL models synchronized
+   ```
+
+2. Telegram'da bot'ni oching
+3. `/start` yuboring
+4. **"Open HabitFlow"** tugmasini bosing
+5. Mini App ochiladi! 🚀
 
 ---
 
@@ -142,9 +153,9 @@ VITE_API_URL=https://habitflow-production.up.railway.app
 
 **Production Endpoints:**
 - 🌐 Frontend: https://habitflow.vercel.app
-- 🔧 Backend: https://habitflow-production.up.railway.app
+- 🔧 Backend: https://habitflow-backend-production.up.railway.app
 - 🤖 Bot: @habitflow_bot
-- 📊 MongoDB: MongoDB Atlas (Cloud)
+- 📊 Database: PostgreSQL (Railway)
 
 **Features ishlaydi:**
 - ✅ Habit yaratish
@@ -153,31 +164,58 @@ VITE_API_URL=https://habitflow-production.up.railway.app
 - ✅ Circular charts
 - ✅ Daily reminders (9 AM UTC)
 - ✅ O'zbek tili
+- ✅ PostgreSQL database
 
 ---
 
 ## 🆘 Troubleshooting
 
-### Mini App ochilmaydi:
-- HTTPS ishlatilganini tekshiring
-- URL to'g'ri BotFather'ga kiritilganini tekshiring
+### PostgreSQL ulanmaydi:
+- Railway Dashboard → Backend service → Variables → `DATABASE_URL` mavjudligini tekshiring
+- PostgreSQL service Link qilinganini tekshiring
+- Railway logs ga qarang: `DATABASE_URL` environment variable mavjudligini tekshiring
 
 ### Backend xatosi:
 - Environment variables to'g'ri kiritilganini tekshiring
 - Railway logs ga qarang (Dashboard → Logs)
+- PostgreSQL service ishlamoqda ekanligini tekshiring
 
-### Database xatosi:
-- MongoDB Atlas connection string ni tekshiring
-- Network Access 0.0.0.0/0 qilganingizni tekshiring
+### Database connection error:
+- Railway PostgreSQL service → Variables → Connection URL ni ko'ring
+- SSL connection kerak bo'lsa, `DATABASE_SSL=true` qo'shing
+- Railway'da PostgreSQL avtomatik SSL bilan ishlaydi
 
 ---
 
 ## 💡 Tips
 
-- Railway free tier yaxshi
-- MongoDB Atlas M0 free
+- Railway free tier - $5 credit beradi
+- PostgreSQL Railway'da bepul (free tier)
 - Vercel free tier cheksiz
 - Telegram bot bepul
 
 **Hammasi bepul ishlaydi!** 🎉
 
+---
+
+## PostgreSQL Database Structure
+
+Database avtomatik yaratiladi. `habits` jadvali avtomatik yaratiladi:
+
+```sql
+CREATE TABLE habits (
+  id SERIAL PRIMARY KEY,
+  userId VARCHAR(255) NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  duration INTEGER NOT NULL,
+  currentDay INTEGER DEFAULT 0,
+  startDate TIMESTAMP DEFAULT NOW(),
+  completed BOOLEAN DEFAULT false,
+  lastCheckIn TIMESTAMP,
+  checkInHistory JSONB DEFAULT '[]',
+  createdAt TIMESTAMP DEFAULT NOW(),
+  updatedAt TIMESTAMP DEFAULT NOW()
+);
+```
+
+Index: `userId` ga index qo'shilgan.

@@ -12,30 +12,37 @@ function App() {
   const [habits, setHabits] = useState([]);
   const [selectedHabit, setSelectedHabit] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [localUserId, setLocalUserId] = useState(null);
 
   useEffect(() => {
     ready();
     expand();
     
-    // If no user (testing in browser), set loading to false after 1 second
+    // If not in Telegram, create a persistent local userId so backend can be used
     if (!user) {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
+      const stored = localStorage.getItem('hf_device_id');
+      if (stored) {
+        setLocalUserId(stored);
+      } else {
+        const generated = 'local-' + Math.random().toString(36).slice(2, 10);
+        localStorage.setItem('hf_device_id', generated);
+        setLocalUserId(generated);
+      }
     }
   }, []);
 
   useEffect(() => {
-    if (user) {
+    if (user || localUserId) {
       loadHabits();
     }
-  }, [user]);
+  }, [user, localUserId]);
 
   const loadHabits = async () => {
-    if (!user) return;
+    const uid = user?.id || localUserId;
+    if (!uid) return;
     
     try {
-      const data = await habitService.getUserHabits(user.id);
+      const data = await habitService.getUserHabits(uid);
       setHabits(data);
       
       // If user has habits, show list instead of welcome
@@ -52,23 +59,10 @@ function App() {
   const handleCreateHabit = async ({ title, duration }) => {
     const durationNumber = typeof duration === 'string' ? parseInt(duration) : duration;
     
-    // For testing without backend
-    if (!user) {
-      const mockHabit = {
-        _id: Date.now().toString(),
-        title,
-        duration: durationNumber,
-        currentDay: 0,
-        completed: false,
-        userId: 'demo-user'
-      };
-      setHabits([mockHabit, ...habits]);
-      setScreen('list');
-      return;
-    }
+    const uid = user?.id || localUserId;
 
     try {
-      const newHabit = await habitService.createHabit(user.id, title, durationNumber);
+      const newHabit = await habitService.createHabit(uid, title, durationNumber);
       setHabits([newHabit, ...habits]);
       setScreen('list');
       hapticFeedback('light');
@@ -79,25 +73,7 @@ function App() {
   };
 
   const handleCheckIn = async (habitId) => {
-    // For testing without backend
-    if (!user) {
-      setHabits(habits.map(h => {
-        if (h._id === habitId) {
-          return { ...h, currentDay: h.currentDay + 1, completed: h.currentDay + 1 >= h.duration };
-        }
-        return h;
-      }));
-      
-      if (selectedHabit?._id === habitId) {
-        const updated = { 
-          ...selectedHabit, 
-          currentDay: selectedHabit.currentDay + 1,
-          completed: selectedHabit.currentDay + 1 >= selectedHabit.duration
-        };
-        setSelectedHabit(updated);
-      }
-      return;
-    }
+    const uid = user?.id || localUserId;
 
     try {
       const updatedHabit = await habitService.checkInHabit(habitId);

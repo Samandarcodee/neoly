@@ -52,11 +52,14 @@ export const useTelegram = () => {
   };
 
   const showAlert = (message) => {
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.showAlert(message);
-    } else {
-      alert(message);
-    }
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg && typeof tg.showAlert === 'function') {
+        tg.showAlert(message);
+        return;
+      }
+    } catch (_) {}
+    alert(message);
   };
 
   const hapticFeedback = (type = 'light') => {
