@@ -6,17 +6,17 @@ WORKDIR /app
 # Copy package.json first
 COPY package.json ./
 
-# Verify package.json exists and has start script
-RUN node -e "const pkg = require('./package.json'); console.log('Package name:', pkg.name); console.log('Start script:', pkg.scripts?.start); if (!pkg.scripts?.start) { throw new Error('Start script missing!'); }"
-
 # Install dependencies
 RUN npm install --omit=dev
 
-# Copy all application files
+# Copy all application files (excluding .dockerignore patterns)
 COPY . .
 
-# Verify package.json still exists after copy
-RUN node -e "const pkg = require('./package.json'); console.log('Package name:', pkg.name); console.log('Start script:', pkg.scripts?.start); if (!pkg.scripts?.start) { throw new Error('Start script missing after copy!'); }"
+# List all files to debug
+RUN echo "=== Files in /app ===" && ls -la
+
+# Verify server.js exists
+RUN if [ ! -f "server.js" ]; then echo "ERROR: server.js not found!" && exit 1; fi
 
 # Set environment variables
 ENV NODE_ENV=production
@@ -25,5 +25,5 @@ ENV PORT=3000
 # Expose port
 EXPOSE 3000
 
-# Start the application directly (this will work regardless of package.json)
+# Start the application
 CMD ["node", "server.js"]
